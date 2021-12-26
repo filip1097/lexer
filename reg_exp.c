@@ -1,10 +1,10 @@
-/*> Description ******************************************************************************************************/
+/*> Description ***********************************************************************************/
 /**
 * @brief Deals with regular expressions.
 * @file reg_exp.c
 */
 
-/*> Includes *********************************************************************************************************/
+/*> Includes **************************************************************************************/
 #include <assert.h>
 #include <stdbool.h>
 #include <stdio.h>
@@ -13,7 +13,7 @@
 
 #include "reg_exp.h"
 
-/*> Defines **********************************************************************************************************/
+/*> Defines ***************************************************************************************/
 #define MAX_NUM_REGEXP_TOKENS 100
 
 #define PARSING_ERROR(...) {\
@@ -23,7 +23,7 @@
   exit(1);\
 }
 
-/*> Type Declarations ************************************************************************************************/
+/*> Type Declarations *****************************************************************************/
 /**
  * @brief The type of a RegExp token.
  */
@@ -91,22 +91,23 @@ typedef struct RegExpParserS
   RegExpTokenS* currToken_p;
 } RegExpParserS;
 
-/*> Global Constant Definitions **************************************************************************************/
+/*> Global Constant Definitions *******************************************************************/
 static const char* currRegExpString_p;
 
-/*> Global Variable Definitions **************************************************************************************/
+/*> Global Variable Definitions *******************************************************************/
 
-/*> Local Constant Definitions ***************************************************************************************/
+/*> Local Constant Definitions ********************************************************************/
 
-/*> Local Variable Definitions ***************************************************************************************/
+/*> Local Variable Definitions ********************************************************************/
 
-/*> Local Function Declarations **************************************************************************************/
+/*> Local Function Declarations *******************************************************************/
 /**
  * @brief Tokenizes the regular expression and puts them into an array.
  * @param[out] tokenArray_p    The token array.
  * @param[in]  regExpString_p  The regular expression as a string.
  */
-static void tokenize_regexp(RegExpTokenArrayS* const tokenArray_p, const char* const regExpString_p);
+static void tokenize_regexp(RegExpTokenArrayS* const tokenArray_p,
+                            const char* const regExpString_p);
 
 /**
  * @brief Checks if a character is an operator character.
@@ -122,13 +123,6 @@ static bool is_regexp_operator_char(const char ch);
 static void print_regexp_token(const RegExpTokenS* token_p);
 
 /**
- * @brief Prints the structure of a regexp.
- * @param[in]  regExp_p     The RegExp to print.
- * @param[in]  indentation  The number of spaces to indent the RegExp info.
- */
-static void print_regexp(const RegExpS* const regExp_p, const int indentation);
-
-/**
  * @brief Adds RegExp token to token array.
  * @param[in/out] tokenArray_p  Pointer to the array.
  * @param[in]     type          The type of token to be added.
@@ -140,7 +134,7 @@ static void add_regexp_token(RegExpTokenArrayS* const tokenArray_p, const RegExp
  * @param[in/out] tokenArray_p      Pointer to the array.
  * @param[in]     charBuffer_p      Char buffer containing characters to be added to token.
  */
-static void add_regexp_string_token(RegExpTokenArrayS* const tokenArray_p, 
+static void add_regexp_string_token(RegExpTokenArrayS* const tokenArray_p,
                                     const RegExpCharBufferS* const charBuffer_p);
 
 /**
@@ -247,7 +241,7 @@ static void add_child_to_regexp(RegExpS* const parent_p, RegExpS* const child_p)
  */
 static void check_regexp_format(const RegExpS* const regexp_p);
 
-/*> Local Function Definitions ***************************************************************************************/
+/*> Local Function Definitions ********************************************************************/
 static void tokenize_regexp(RegExpTokenArrayS* tokenArray_p, const char* const regExpString_p)
 {
   RegExpCharBufferS charBuffer = { .numChars = 0 };
@@ -314,51 +308,6 @@ static void print_regexp_token(const RegExpTokenS* token_p)
   }
 }
 
-static void print_regexp(const RegExpS* const regExp_p, const int indentation)
-{
-  for (int i = 0; i < indentation; i++)
-  {
-    printf(" ");
-  }
-  switch(regExp_p->type)
-  {
-  case REGEXP_SEQUENCE:
-    printf("Sequence\n");
-    break;
-  case REGEXP_OPTIONAL:
-    printf("Optional\n");
-    break;
-  case REGEXP_ONE_OR_MORE:
-    printf("OneOrMore\n");
-    break;
-  case REGEXP_ZERO_OR_MORE:
-    printf("ZeroOrMore\n");
-    break;
-  case REGEXP_OR:
-    printf("Or\n");
-    break;
-  case REGEXP_STRING:
-    printf("String(\"");
-    for (int i = 0; i < regExp_p->numChars; i++)
-    {
-      printf("%c", regExp_p->characters[i]);
-    }
-    printf("\")\n");
-    break;
-  case REGEXP_ONE_OF:
-    printf("OneOf\n");
-    break;
-  case REGEXP_RANGE:
-    printf("Range\n");
-    break;
-  }
-
-  for (int i = 0; i < regExp_p->numChildren; i++)
-  {
-    print_regexp(regExp_p->children[i], indentation + 1);
-  }
-}
-
 static void add_regexp_token(RegExpTokenArrayS* const tokenArray_p, const RegExpTokenTypeE type)
 {
   tokenArray_p->tokens[tokenArray_p->numTokens].type = type;
@@ -366,11 +315,13 @@ static void add_regexp_token(RegExpTokenArrayS* const tokenArray_p, const RegExp
   assert(tokenArray_p->numTokens <= MAX_NUM_REGEXP_TOKENS);
 }
 
-static void add_regexp_string_token(RegExpTokenArrayS* const tokenArray_p,                                    
+static void add_regexp_string_token(RegExpTokenArrayS* const tokenArray_p,
                                     const RegExpCharBufferS* const charBuffer_p)
 {
   tokenArray_p->tokens[tokenArray_p->numTokens].type = REGEXP_TOKEN_STRING;
-  memcpy(tokenArray_p->tokens[tokenArray_p->numTokens].characters, charBuffer_p->characters, charBuffer_p->numChars);
+  memcpy(tokenArray_p->tokens[tokenArray_p->numTokens].characters,
+         charBuffer_p->characters,
+         charBuffer_p->numChars);
   tokenArray_p->tokens[tokenArray_p->numTokens].numChars = charBuffer_p->numChars;
         
   (tokenArray_p->numTokens)++;
@@ -573,18 +524,7 @@ static void check_regexp_format(const RegExpS* const regexp_p)
   }
 }
 
-/*> Global Function Definitions **************************************************************************************/
-RegExpS* parse_regexp(const char* const regExpString_p)
-{
-  currRegExpString_p = regExpString_p;
-  RegExpTokenArrayS tokenArray = { .numTokens = 0 };
-  tokenize_regexp(&tokenArray, regExpString_p);
-  RegExpParserS parser = { .tokenArray_p = &tokenArray, .tokenIndex = 0, .currToken_p = &(tokenArray.tokens[0]) };
-  RegExpS* regexp_p = parse_start(&parser);
-  check_regexp_format(regexp_p);
-  return regexp_p;
-}
-
+/*> Global Function Definitions *******************************************************************/
 void free_regexp(RegExpS* const regExpString_p)
 {
   for (int i = 0; i < regExpString_p->numChildren; i++)
@@ -592,4 +532,65 @@ void free_regexp(RegExpS* const regExpString_p)
     free_regexp(regExpString_p->children[i]);
   }
   free(regExpString_p);
+}
+
+RegExpS* parse_regexp(const char* const regExpString_p)
+{
+  currRegExpString_p = regExpString_p;
+  RegExpTokenArrayS tokenArray = { .numTokens = 0 };
+  tokenize_regexp(&tokenArray, regExpString_p);
+  RegExpParserS parser =
+  {
+    .tokenArray_p = &tokenArray,
+    .tokenIndex = 0,
+    .currToken_p = &(tokenArray.tokens[0])
+  };
+  RegExpS* regexp_p = parse_start(&parser);
+  check_regexp_format(regexp_p);
+  return regexp_p;
+}
+
+void print_regexp(const RegExpS* const regExp_p, const int indentation)
+{
+  for (int i = 0; i < indentation; i++)
+  {
+    printf(" ");
+  }
+  switch(regExp_p->type)
+  {
+  case REGEXP_SEQUENCE:
+    printf("Sequence\n");
+    break;
+  case REGEXP_OPTIONAL:
+    printf("Optional\n");
+    break;
+  case REGEXP_ONE_OR_MORE:
+    printf("OneOrMore\n");
+    break;
+  case REGEXP_ZERO_OR_MORE:
+    printf("ZeroOrMore\n");
+    break;
+  case REGEXP_OR:
+    printf("Or\n");
+    break;
+  case REGEXP_STRING:
+    printf("String(\"");
+    for (int i = 0; i < regExp_p->numChars; i++)
+    {
+      printf("%c", regExp_p->characters[i]);
+    }
+    printf("\")\n");
+    break;
+  case REGEXP_ONE_OF:
+    printf("OneOf\n");
+    break;
+  case REGEXP_RANGE:
+    printf("Range\n");
+    break;
+  }
+
+  for (int i = 0; i < regExp_p->numChildren; i++)
+  {
+    print_regexp(regExp_p->children[i], indentation + 1);
+  }
 }

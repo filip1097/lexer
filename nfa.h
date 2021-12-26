@@ -1,39 +1,42 @@
-/*> Description ******************************************************************************************************/
+/*> Description ***********************************************************************************/
 /**
  * @brief Deals with NFAs (nondeterministic finite automaton).
  * @file nfa.h
  */
 
-/*> Multiple Inclusion Protection ************************************************************************************/
+/*> Multiple Inclusion Protection *****************************************************************/
 #ifndef NFA_H 
 #define NFA_H
 
-/*> Includes *********************************************************************************************************/
-#include "reg_exp.h"
-
+/*> Includes **************************************************************************************/
+#include <limits.h>
 #include <stdbool.h>
 
-/*> Defines **********************************************************************************************************/
-#define NUM_CHARS 256
-#define MAX_NUM_EXPSILON_TRANSITIONS 25
-#define MAX_NUM_NFA_STATES 64
+#include "reg_exp.h"
 
-/*> Type Declarations ************************************************************************************************/
+/*> Defines ***************************************************************************************/
+#define MAX_NUM_EXPSILON_TRANSITIONS  25
+#define MAX_NUM_NFA_STATES            64
+#define NO_STATE                      UINT_MAX
+#define NUM_CHARS                     256
+
+/*> Type Declarations *****************************************************************************/
 /**
  * @brief A state in an NFA.
- * @param isEndState True if the state is an end state, false otherwise.
- * @param outputValue The output value returned once the NFA reaches its end state.
- * @param transitions The transitions to other states based on chars.
- * @param numEpsilonTransitions The number of epsilon transitions this state has.
- * @param epsilonTransitions The epsilon transitions from this state.
+ *
+ * @param isEndState             True if the state is an end state, false otherwise.
+ * @param outputValue            The output value returned once the NFA reaches its end state.
+ * @param transitions            The index of states to transition to given a char.
+ * @param numEpsilonTransitions  The number of epsilon transitions this state has.
+ * @param epsilonTransitions     The index of states this state has an epsilon transition to.
  */
 typedef struct NfaStateS
 {
   bool isEndState;
   int outputValue;
-  struct NfaStateS* transitions[NUM_CHARS];
+  int transitions[NUM_CHARS];
   int numEpsilonTransitions;
-  struct NfaStateS* epsilonTransitions[MAX_NUM_EXPSILON_TRANSITIONS];
+  int epsilonTransitions[MAX_NUM_EXPSILON_TRANSITIONS];
 } NfaStateS;
 
 /**
@@ -47,11 +50,11 @@ typedef struct NfaS
   NfaStateS states[MAX_NUM_NFA_STATES];
 } NfaS;
 
-/*> Constant Declarations ********************************************************************************************/
+/*> Constant Declarations *************************************************************************/
 
-/*> Variable Declarations ********************************************************************************************/
+/*> Variable Declarations *************************************************************************/
 
-/*> Function Declarations ********************************************************************************************/
+/*> Function Declarations *************************************************************************/
 /**
  * @brief Converts the input RegExp to an NFA.
  * @param[in]  regExp_p     The input RegExp.
@@ -68,5 +71,5 @@ NfaS* generate_nfa(const RegExpS* const regExp_p, const int outputValue);
  */
 NfaS* generate_combined_nfa(RegExpS** const regExps_pp, const int numRegExps);
 
-/*> End of Multiple Inclusion Protection *****************************************************************************/
-#endif 
+/*> End of Multiple Inclusion Protection **********************************************************/
+#endif

@@ -1,20 +1,20 @@
-/*> Description ******************************************************************************************************/
+/*> Description ***********************************************************************************/
 /**
  * @brief Deals with regular expressions.
  * @file reg_exp.h
  */
 
-/*> Multiple Inclusion Protection ************************************************************************************/
-#ifndef REGULAR_EXPRESSION_H
-#define REGULAR_EXPRESSION_H
+/*> Multiple Inclusion Protection *****************************************************************/
+#ifndef REG_EXP_H
+#define REG_EXP_H
 
-/*> Includes *********************************************************************************************************/
+/*> Includes **************************************************************************************/
 
-/*> Defines **********************************************************************************************************/
+/*> Defines ***************************************************************************************/
 #define MAX_NUM_REGEXP_CHILDREN 20
 #define MAX_REGEXP_STRING_LENGTH 100
 
-/*> Type Declarations ************************************************************************************************/
+/*> Type Declarations *****************************************************************************/
 /**
  * @brief The type of a RegExp.
  */
@@ -63,11 +63,17 @@ typedef struct RegExpS
   };
 } RegExpS;
 
-/*> Constant Declarations ********************************************************************************************/
+/*> Constant Declarations *************************************************************************/
 
-/*> Variable Declarations ********************************************************************************************/
+/*> Variable Declarations *************************************************************************/
 
-/*> Function Declarations ********************************************************************************************/
+/*> Function Declarations *************************************************************************/
+/**
+ * @brief Frees a regular expression.
+ * @param[in] regExpString_p The RegExp.
+ */
+void free_regexp(RegExpS* const regExpString_p);
+
 /**
  * @brief Parses a regular expression.
  * @param[in] regExpString_p The regular expression as a string.
@@ -76,10 +82,12 @@ typedef struct RegExpS
 RegExpS* parse_regexp(const char* const regExpString_p);
 
 /**
- * @brief Frees a regular expression.
- * @param[in] regExpString_p The RegExp.
+ * @brief Prints the structure of a regexp.
+ * @param[in]  regExp_p     The RegExp to print.
+ * @param[in]  indentation  The number of spaces to indent the RegExp info.
  */
-void free_regexp(RegExpS* const regExpString_p);
+void print_regexp(const RegExpS* const regExp_p, const int indentation);
 
-/*> End of Multiple Inclusion Protection *****************************************************************************/
-#endif 
+
+/*> End of Multiple Inclusion Protection **********************************************************/
+#endif
