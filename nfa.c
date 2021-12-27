@@ -7,6 +7,7 @@
 /*> Includes **************************************************************************************/
 #include <assert.h>
 #include <stdlib.h>
+#include <stdio.h>
 #include <string.h>
 
 #include "bitset.h"
@@ -130,6 +131,13 @@ static int add_end_state(NfaS* const nfa_p, const int outputValue);
  * @param[in]      endIdx    The index of the end state.
  */
 static void add_epsilon_transition(NfaS* const nfa_p, const int startIdx, const int endIdx);
+
+/**
+ * @brief Prints an NFA state with all its transitions.
+ * @param[in]  nfa_p     The NFA.
+ * @param[in]  stateIdx  The index of the state to be printed.
+ */
+static void print_nfa_state(const NfaS* const nfa_p, const int stateIdx);
 
 /*> Local Function Definitions ********************************************************************/
 static StartAndEndStateS convert(NfaS* const nfa_p, const RegExpS* const regExp_p)
@@ -299,21 +307,57 @@ static void add_epsilon_transition(NfaS* const nfa_p, const int startIdx, const 
   add_to_bitset(&(start_p->epsilonTransitions), endIdx);
 }
 
-/*> Global Function Definitions *******************************************************************/
-NfaS* generate_nfa(const RegExpS* const regExp_p, const int outputValue)
+static void print_nfa_state(const NfaS* const nfa_p, const int stateIdx)
 {
-  NfaS* nfa_p = malloc(sizeof(*nfa_p));
-  nfa_p->numStates = 0;
+  const NfaStateS* nfaState_p = &(nfa_p->states[stateIdx]);
 
-  int startIdx = add_new_state(nfa_p);
-  int endIdx = add_end_state(nfa_p, outputValue);
-  StartAndEndStateS startAndEndOfConverted = convert(nfa_p, regExp_p);
-  add_epsilon_transition(nfa_p, startIdx, startAndEndOfConverted.startIdx);
-  add_epsilon_transition(nfa_p, startAndEndOfConverted.endIdx, endIdx);
+  if (nfaState_p->isEndState)
+  {
+    printf("-State Q%d | End state : %d\n", stateIdx, nfaState_p->outputValue);
+  }
+  else
+  {
+    printf("-State Q%d\n", stateIdx);
+  }
 
-  return nfa_p;
+  int prevTransition = NO_STATE;
+  char prevTransitionFirstChar = 0;
+  for (int character = 0; character < NUM_CHARS; character++)
+  {
+    int currTransition = nfaState_p->transitions[character];
+
+    if (prevTransition != currTransition)
+    {
+      if (prevTransition != NO_STATE)
+      {
+        if (prevTransitionFirstChar >= character - 1)
+        {
+          printf(" *Transition '%c' -> Q%d\n", prevTransitionFirstChar, prevTransition);
+        }
+        else
+        {
+          printf(" *Transition '%c'-'%c' -> Q%d\n",
+                 prevTransitionFirstChar,
+                 character-1,
+                 prevTransition);
+        }
+      }
+      prevTransitionFirstChar = character;
+    }
+
+    prevTransition = currTransition;
+  }
+
+  for (int i = 0; i < nfa_p->numStates; i++)
+  {
+    if (is_in_bitset(&(nfaState_p->epsilonTransitions), i))
+    {
+      printf(" *Transition eps -> Q%d\n", i);
+    }
+  }
 }
 
+/*> Global Function Definitions *******************************************************************/
 NfaS* generate_combined_nfa(RegExpS** const regExps_pp, const int numRegExps)
 {
   NfaS* nfa_p = malloc(sizeof(*nfa_p));
@@ -331,4 +375,28 @@ NfaS* generate_combined_nfa(RegExpS** const regExps_pp, const int numRegExps)
   }
 
   return nfa_p;
+}
+
+NfaS* generate_nfa(const RegExpS* const regExp_p, const int outputValue)
+{
+  NfaS* nfa_p = malloc(sizeof(*nfa_p));
+  nfa_p->numStates = 0;
+
+  int startIdx = add_new_state(nfa_p);
+  int endIdx = add_end_state(nfa_p, outputValue);
+  StartAndEndStateS startAndEndOfConverted = convert(nfa_p, regExp_p);
+  add_epsilon_transition(nfa_p, startIdx, startAndEndOfConverted.startIdx);
+  add_epsilon_transition(nfa_p, startAndEndOfConverted.endIdx, endIdx);
+
+  return nfa_p;
+}
+
+void print_nfa(const NfaS* const nfa_p)
+{
+  printf("NFA has %d states:\n", nfa_p->numStates);
+
+  for (int i = 0; i < nfa_p->numStates; i++)
+  {
+    print_nfa_state(nfa_p, i);
+  }
 }

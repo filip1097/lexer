@@ -55,6 +55,14 @@ typedef struct NfaS
 
 /*> Function Declarations *************************************************************************/
 /**
+ * @brief Generates a combined NFA based on an array of RegExps.
+ * @param[in]  regExps_pp   The input RegExps.
+ * @param[in]  numRegExps   The number of RegExps.
+ * @return Pointer to allocated NFA.
+ */
+NfaS* generate_combined_nfa(RegExpS** const regExps_pp, const int numRegExps);
+
+/**
  * @brief Converts the input RegExp to an NFA.
  * @param[in]  regExp_p     The input RegExp.
  * @param[in]  outputValue  The value returned once the NFA reaches its end state.
@@ -63,12 +71,10 @@ typedef struct NfaS
 NfaS* generate_nfa(const RegExpS* const regExp_p, const int outputValue);
 
 /**
- * @brief Generates a combined NFA based on an array of RegExps.
- * @param[in]  regExps_pp   The input RegExps.
- * @param[in]  numRegExps   The number of RegExps.
- * @return Pointer to allocated NFA.
+ * @brief Prints the NFA with all its states and transitions.
+ * @param[in]  nfa_p  The NFA to print.
  */
-NfaS* generate_combined_nfa(RegExpS** const regExps_pp, const int numRegExps);
+void print_nfa(const NfaS* const nfa_p);
 
 /*> End of Multiple Inclusion Protection **********************************************************/
 #endif
