@@ -12,10 +12,10 @@
 #include <limits.h>
 #include <stdbool.h>
 
+#include "bitset.h"
 #include "reg_exp.h"
 
 /*> Defines ***************************************************************************************/
-#define MAX_NUM_EXPSILON_TRANSITIONS  25
 #define MAX_NUM_NFA_STATES            64
 #define NO_STATE                      UINT_MAX
 #define NUM_CHARS                     256
@@ -26,17 +26,16 @@
  *
  * @param isEndState             True if the state is an end state, false otherwise.
  * @param outputValue            The output value returned once the NFA reaches its end state.
- * @param transitions            The index of states to transition to given a char.
- * @param numEpsilonTransitions  The number of epsilon transitions this state has.
- * @param epsilonTransitions     The index of states this state has an epsilon transition to.
+ * @param transitions            The indicies of states to transition to given a char.
+ * @param epsilonTransitions     The indicies of states this state has an epsilon transition to as a
+ *                               bit set.
  */
 typedef struct NfaStateS
 {
   bool isEndState;
   int outputValue;
   int transitions[NUM_CHARS];
-  int numEpsilonTransitions;
-  int epsilonTransitions[MAX_NUM_EXPSILON_TRANSITIONS];
+  BitSetT epsilonTransitions;
 } NfaStateS;
 
 /**

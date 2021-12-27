@@ -9,6 +9,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "bitset.h"
 #include "nfa.h"
 
 /*> Defines ***************************************************************************************/
@@ -276,7 +277,7 @@ static int add_new_state(NfaS* const nfa_p)
   assert(nfa_p->numStates < MAX_NUM_NFA_STATES);
 
   NfaStateS* newState_p = &(nfa_p->states[newStateIdx]);
-  newState_p->numEpsilonTransitions = 0;
+  newState_p->epsilonTransitions = 0;
   newState_p->isEndState = false;
   memset(newState_p->transitions, NO_STATE, sizeof(newState_p->transitions[0]) * NUM_CHARS);
 
@@ -295,10 +296,7 @@ static int add_end_state(NfaS* const nfa_p, const int outputValue)
 static void add_epsilon_transition(NfaS* const nfa_p, const int startIdx, const int endIdx)
 {
   NfaStateS* start_p = &(nfa_p->states[startIdx]);
-
-  start_p->epsilonTransitions[start_p->numEpsilonTransitions] = endIdx;
-  start_p->numEpsilonTransitions++;
-  assert(start_p->numEpsilonTransitions < MAX_NUM_EXPSILON_TRANSITIONS);
+  add_to_bitset(&(start_p->epsilonTransitions), endIdx);
 }
 
 /*> Global Function Definitions *******************************************************************/
