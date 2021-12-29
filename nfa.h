@@ -55,6 +55,14 @@ typedef struct NfaS
 
 /*> Function Declarations *************************************************************************/
 /**
+ * @brief Calculates the epsilon closure of the NFA state.
+ * @param[in]  nfa_p     The NFA.
+ * @param[in]  stateIdx  The index of the state.
+ * @return Bit set containing the states in the epsilon closure.
+ */
+BitSetT epsilon_closure(const NfaS* const nfa_p, const int stateIdx);
+
+/**
  * @brief Generates a combined NFA based on an array of RegExps.
  * @param[in]  regExps_pp   The input RegExps.
  * @param[in]  numRegExps   The number of RegExps.

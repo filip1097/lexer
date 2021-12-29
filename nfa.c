@@ -358,6 +358,24 @@ static void print_nfa_state(const NfaS* const nfa_p, const int stateIdx)
 }
 
 /*> Global Function Definitions *******************************************************************/
+BitSetT epsilon_closure(const NfaS* const nfa_p, const int stateIdx)
+{
+  const NfaStateS* currState_p = &(nfa_p->states[stateIdx]);
+  BitSetT statesInEpslionClosure = 0;
+  add_to_bitset(&statesInEpslionClosure, stateIdx);
+
+  for (int i = 0; i < nfa_p->numStates; i++)
+  {
+    if (is_in_bitset(&(currState_p->epsilonTransitions), i) && 
+          !is_in_bitset(&statesInEpslionClosure, i))
+    {
+      statesInEpslionClosure &= epsilon_closure(nfa_p, i);
+    }
+  }
+
+  return statesInEpslionClosure;
+}
+
 NfaS* generate_combined_nfa(RegExpS** const regExps_pp, const int numRegExps)
 {
   NfaS* nfa_p = malloc(sizeof(*nfa_p));

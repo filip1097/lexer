@@ -1,32 +1,34 @@
-/*> Description ******************************************************************************************************/
+/*> Description ***********************************************************************************/
 /**
  * @brief Deals with DFAs (deterministic finite automaton).
  * @file dfa.h
  */
 
-/*> Multiple Inclusion Protection ************************************************************************************/
+/*> Multiple Inclusion Protection *****************************************************************/
 #ifndef DFA_H 
 #define DFA_H
 
-/*> Includes *********************************************************************************************************/
+/*> Includes **************************************************************************************/
 #include "nfa.h"
 
 #include <stdbool.h>
 
-/*> Defines **********************************************************************************************************/
+/*> Defines ***************************************************************************************/
 #define NUM_CHARS 256
 #define MAX_NUM_DFA_STATES 64
 
-/*> Type Declarations ************************************************************************************************/
+/*> Type Declarations *****************************************************************************/
 /**
  * @brief A state in an DFA.
- * @param isEndState True if the state is an end state, false otherwise.
- * @param transitions The transitions to other states based on chars.
+ * @param  isEndState   True if the state is an end state, false otherwise.
+ * @param  outputValue  The value this state returns if it is an end state.
+ * @param  transitions  The transitions to other states based on chars.
  */
 typedef struct DfaStateS
 {
   bool isEndState;
-  struct DfaStateS* transitions[NUM_CHARS];
+  int outputValue;
+  int transitions[NUM_CHARS];
 } DfaStateS;
 
 /**
@@ -40,11 +42,11 @@ typedef struct DfaS
   DfaStateS states[MAX_NUM_DFA_STATES];
 } DfaS;
 
-/*> Constant Declarations ********************************************************************************************/
+/*> Constant Declarations *************************************************************************/
 
-/*> Variable Declarations ********************************************************************************************/
+/*> Variable Declarations *************************************************************************/
 
-/*> Function Declarations ********************************************************************************************/
+/*> Function Declarations *************************************************************************/
 /**
  * @brief Converts the input NFA to an DFA.
  * @param[in] nfa_p The input NFA.
@@ -52,5 +54,5 @@ typedef struct DfaS
  */
 DfaS* convert_to_dfa(NfaS* nfa_p);
 
-/*> End of Multiple Inclusion Protection *****************************************************************************/
+/*> End of Multiple Inclusion Protection **********************************************************/
 #endif 
