@@ -54,5 +54,11 @@ typedef struct DfaS
  */
 DfaS* convert_to_dfa(const NfaS* const nfa_p);
 
+/**
+ * @brief Prints the DFA with all its states and transitions.
+ * @param[in]  dfa_p  The DFA to print.
+ */
+void print_dfa(const DfaS* const dfa_p);
+
 /*> End of Multiple Inclusion Protection **********************************************************/
 #endif 

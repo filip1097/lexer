@@ -1,18 +1,11 @@
 /*> Description ***********************************************************************************/
 /**
-* @brief Generates a lexer based on input regular expressions.
-* @file lexer_generator.c
-*/
+ * @brief Functionality for bitsets.
+ * @file bitset.c
+ */
 
 /*> Includes **************************************************************************************/
-#include <assert.h>
-#include <stdio.h>
-#include <stdlib.h>
-
-#include "dfa.h"
-#include "lexer_generator.h"
-#include "nfa.h"
-#include "reg_exp.h"
+#include "bitset.h"
 
 /*> Defines ***************************************************************************************/
 
@@ -31,26 +24,23 @@
 /*> Local Function Definitions ********************************************************************/
 
 /*> Global Function Definitions *******************************************************************/
-LexerS* generate_lexer(const char** const regExpStrs_pp, const int numRegExps)
+void bitset_to_string(const BitSetT* const bitset_p, char str[BITSET_STRING_SIZE])
 {
-  RegExpS* regExps[numRegExps];
+  uint64_t one = 1;
+  BitSetT bits = *bitset_p;
 
-  for (int i = 0; i < numRegExps; i++)
+  for (int i = BITSET_SIZE - 1; i >= 0 ; i--)
   {
-    printf("Parsing the regExp: %s\n", regExpStrs_pp[i]);
-    regExps[i] = parse_regexp(regExpStrs_pp[i]);
-    printf("The output is:\n");
-    print_regexp(regExps[i], 0);
+    if (bits & one == one)
+    {
+      str[i] = '1';
+    }
+    else
+    {
+      str[i] = '0';
+    }
+    bits = bits >> 1;
   }
 
-  NfaS* nfa_p = generate_combined_nfa(regExps, numRegExps);
-  print_nfa(nfa_p);
-  DfaS* dfa_p = convert_to_dfa(nfa_p);
-  print_dfa(dfa_p);
-
-  // free_regexps(regExps, numRegExps);
-  free(nfa_p);
-  free(dfa_p);
-
-  return NULL;
+  str[BITSET_STRING_SIZE - 1] = '\0';
 }

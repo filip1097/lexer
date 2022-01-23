@@ -375,10 +375,13 @@ BitSetT epsilon_closure(const NfaS* const nfa_p, const int stateIdx)
       {
         const NfaStateS* stateInClosure_p = &(nfa_p->states[i]);
         BitSetT newStatesInClosure = statesInEpslionClosure | stateInClosure_p->epsilonTransitions;
-        hasChanged = (newStatesInClosure != statesInEpslionClosure);
+        if (newStatesInClosure != statesInEpslionClosure)
+        {
+          hasChanged = true;
+        }
         statesInEpslionClosure = newStatesInClosure;
       }
-  }
+    }
 
   } while (hasChanged);
 

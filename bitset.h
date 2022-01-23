@@ -13,6 +13,8 @@
 #include <stdint.h>
 
 /*> Defines ***************************************************************************************/
+#define BITSET_SIZE 64
+#define BITSET_STRING_SIZE (BITSET_SIZE + 1)
 
 /*> Type Declarations *****************************************************************************/
 /**
@@ -32,7 +34,7 @@ typedef uint64_t BitSetT;
  */
 static inline void add_to_bitset(BitSetT* const bitset_p, const int num)
 {
-  *bitset_p |= (1 << num);
+  *bitset_p |= ((uint64_t) 1 << num);
 }
 
 /**
@@ -43,8 +45,15 @@ static inline void add_to_bitset(BitSetT* const bitset_p, const int num)
  */
 static inline bool is_in_bitset(const BitSetT* const bitset_p, const int num)
 {
-  return (*bitset_p & (1 << num)) > 0;
+  return ((*bitset_p) & ((uint64_t) 1 << num)) > 0;
 }
+
+/**
+ * @brief Converts the provided bitset to a string of the bitset in binary form.
+ * @param[in]   bitset_p  The bitset.
+ * @param[out]  str       The string buffer to fill.
+ */
+void bitset_to_string(const BitSetT* const bitset_p, char str[BITSET_STRING_SIZE]);
 
 /*> End of Multiple Inclusion Protection **********************************************************/
 #endif
