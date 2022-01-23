@@ -49,10 +49,10 @@ typedef struct DfaS
 /*> Function Declarations *************************************************************************/
 /**
  * @brief Converts the input NFA to an DFA.
- * @param[in] nfa_p The input NFA.
+ * @param[in]  nfa_p  The input NFA.
  * @return Pointer to allocated DFA.
  */
-DfaS* convert_to_dfa(NfaS* nfa_p);
+DfaS* convert_to_dfa(const NfaS* const nfa_p);
 
 /*> End of Multiple Inclusion Protection **********************************************************/
 #endif 

@@ -29,6 +29,7 @@ int main()
   const char* regExps[] = {"int", "char", "[0-9]+", "ba(g|d|[h,2])?(ab(hg)+)*"};
   generate_lexer(regExps, 4);
 
+  printf("Finished\n");
   return 0;
 }
 

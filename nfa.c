@@ -361,17 +361,26 @@ static void print_nfa_state(const NfaS* const nfa_p, const int stateIdx)
 BitSetT epsilon_closure(const NfaS* const nfa_p, const int stateIdx)
 {
   const NfaStateS* currState_p = &(nfa_p->states[stateIdx]);
-  BitSetT statesInEpslionClosure = 0;
+  BitSetT statesInEpslionClosure = currState_p->epsilonTransitions;
   add_to_bitset(&statesInEpslionClosure, stateIdx);
 
-  for (int i = 0; i < nfa_p->numStates; i++)
+  bool hasChanged;
+  do
   {
-    if (is_in_bitset(&(currState_p->epsilonTransitions), i) && 
-          !is_in_bitset(&statesInEpslionClosure, i))
+    hasChanged = false;
+
+    for (int i = 0; i < nfa_p->numStates; i++)
     {
-      statesInEpslionClosure &= epsilon_closure(nfa_p, i);
-    }
+      if (is_in_bitset(&(statesInEpslionClosure), i))
+      {
+        const NfaStateS* stateInClosure_p = &(nfa_p->states[i]);
+        BitSetT newStatesInClosure = statesInEpslionClosure | stateInClosure_p->epsilonTransitions;
+        hasChanged = (newStatesInClosure != statesInEpslionClosure);
+        statesInEpslionClosure = newStatesInClosure;
+      }
   }
+
+  } while (hasChanged);
 
   return statesInEpslionClosure;
 }
