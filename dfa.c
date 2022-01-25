@@ -45,11 +45,36 @@ static void create_dfa_states(DfaS* const dfa_p,
                               const int nfaStateIdx);
 
 /**
+ * @brief Checks if two DFA states are equal.
+ * @param[in]  dfaState1_p  The first DFA state.
+ * @param[in]  dfaState2_p  The second DFA state.
+ * @return true if the states are equal, false otherwise.
+ */
+static bool dfa_state_is_equal(const DfaStateS* const dfaState1_p,
+                               const DfaStateS* const dfaState2_p);
+
+/**
+ * @brief Optimizes the DFA by removing unecessary states.
+ * @param[in/out]  dfa_p  The DFA.
+ */
+static void optimize_dfa(DfaS* const dfa_p);
+
+/**
  * @brief Prints a DFA state with all its transitions.
  * @param[in]  dfa_p     The DFA.
  * @param[in]  stateIdx  The index of the state to be printed.
  */
 static void print_dfa_state(const DfaS* const dfa_p, const int stateIdx);
+
+/**
+ * @brief Joins two equal DFA states together.
+ * @param[in/out]  dfa_p      The DFA that contains the states.
+ * @param[in]      stateIdx1  The index of the first DFA state.
+ * @param[in]      stateIdx2  The index of the second DFA state.
+ */
+static void join_equal_dfa_states(DfaS* const dfa_p,
+                              const int stateIdx1,
+                              const int stateIdx2);
 
 /*> Local Function Definitions ********************************************************************/
 static void create_dfa_states(DfaS* const dfa_p,
@@ -122,6 +147,51 @@ static void create_dfa_states(DfaS* const dfa_p,
   }
 }
 
+static bool dfa_state_is_equal(const DfaStateS* const dfaState1_p, 
+                               const DfaStateS* const dfaState2_p)
+{
+  if (dfaState1_p->isEndState != dfaState2_p->isEndState ||
+      dfaState1_p->outputValue != dfaState2_p->outputValue)
+  {
+    return false;
+  }
+
+  for (int i = 0; i < NUM_CHARS; i++)
+  {
+    if (dfaState1_p->transitions[i] != dfaState2_p->transitions[i])
+    {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+static void optimize_dfa(DfaS* const dfa_p)
+{
+  bool hasChanged;
+
+  do
+  {
+    hasChanged = false;
+
+    for (int i = 0; i < dfa_p->numStates; i++)
+    {
+      for (int j = i + 1; j < dfa_p->numStates; j++)
+      {
+        if (dfa_state_is_equal(&dfa_p->states[i], &dfa_p->states[j]))
+        {
+          join_equal_dfa_states(dfa_p, i, j);
+
+          hasChanged = true;
+          // check if the replacement state is also the same
+          j--;
+        }
+      }
+    }
+  } while (hasChanged);
+}
+
 static void print_dfa_state(const DfaS* const dfa_p, const int stateIdx)
 {
   const DfaStateS* dfaState_p = &(dfa_p->states[stateIdx]);
@@ -164,6 +234,31 @@ static void print_dfa_state(const DfaS* const dfa_p, const int stateIdx)
   }
 }
 
+static void join_equal_dfa_states(DfaS* const dfa_p,
+                                  const int stateIdx1,
+                                  const int stateIdx2)
+{
+  int lastStateIdx = dfa_p->numStates - 1;
+
+  for (int i = 0; i < dfa_p->numStates; i++)
+  {
+    for (int j = 0; j < NUM_CHARS; j++)
+    {
+      if (dfa_p->states[i].transitions[j] == stateIdx2)
+      {
+        dfa_p->states[i].transitions[j] = stateIdx1;
+      }
+      else if (dfa_p->states[i].transitions[j] == lastStateIdx)
+      {
+        dfa_p->states[i].transitions[j] = stateIdx2;
+      }
+    }
+  }
+
+  memcpy(&dfa_p->states[stateIdx2], &dfa_p->states[lastStateIdx], sizeof(DfaStateS));
+  dfa_p->numStates--;
+}
+
 /*> Global Function Definitions *******************************************************************/
 DfaS* convert_to_dfa(const NfaS* const nfa_p)
 {
@@ -174,6 +269,7 @@ DfaS* convert_to_dfa(const NfaS* const nfa_p)
   memset(nfaToDfaMap, NO_STATE, sizeof(nfaToDfaMap));
 
   create_dfa_states(dfa_p, powerSets, nfaToDfaMap, nfa_p, 0);
+  optimize_dfa(dfa_p);
 
   return dfa_p;
 }

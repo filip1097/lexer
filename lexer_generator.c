@@ -37,14 +37,10 @@ LexerS* generate_lexer(const char** const regExpStrs_pp, const int numRegExps)
 
   for (int i = 0; i < numRegExps; i++)
   {
-    printf("Parsing the regExp: %s\n", regExpStrs_pp[i]);
     regExps[i] = parse_regexp(regExpStrs_pp[i]);
-    printf("The output is:\n");
-    print_regexp(regExps[i], 0);
   }
 
   NfaS* nfa_p = generate_combined_nfa(regExps, numRegExps);
-  print_nfa(nfa_p);
   DfaS* dfa_p = convert_to_dfa(nfa_p);
   print_dfa(dfa_p);
 
