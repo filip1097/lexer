@@ -525,13 +525,21 @@ static void check_regexp_format(const RegExpS* const regexp_p)
 }
 
 /*> Global Function Definitions *******************************************************************/
-void free_regexp(RegExpS* const regExpString_p)
+void free_regexp(RegExpS* const regExp_p)
 {
-  for (int i = 0; i < regExpString_p->numChildren; i++)
+  for (int i = 0; i < regExp_p->numChildren; i++)
   {
-    free_regexp(regExpString_p->children[i]);
+    free_regexp(regExp_p->children[i]);
   }
-  free(regExpString_p);
+  free(regExp_p);
+}
+
+void free_regexps(RegExpS** const regExps_pp, const int numRegExps)
+{
+  for (int i = 0; i < numRegExps; i++)
+  {
+    free_regexp(regExps_pp[i]);
+  }
 }
 
 RegExpS* parse_regexp(const char* const regExpString_p)

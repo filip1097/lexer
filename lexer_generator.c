@@ -44,7 +44,7 @@ LexerS* generate_lexer(const char** const regExpStrs_pp, const int numRegExps)
   DfaS* dfa_p = convert_to_dfa(nfa_p);
   print_dfa(dfa_p);
 
-  // free_regexps(regExps, numRegExps);
+  free_regexps(regExps, numRegExps);
   free(nfa_p);
   free(dfa_p);
 

@@ -70,9 +70,16 @@ typedef struct RegExpS
 /*> Function Declarations *************************************************************************/
 /**
  * @brief Frees a regular expression.
- * @param[in] regExpString_p The RegExp.
+ * @param[in]  regExp_p  The RegExp.
  */
-void free_regexp(RegExpS* const regExpString_p);
+void free_regexp(RegExpS* const regExp_p);
+
+/**
+ * @brief Frees an array of regular expressions.
+ * @param[in]  regExps_pp  The RegExps.
+ * @param[in]  numRegExps  The number of RegExps.
+ */
+void free_regexps(RegExpS** const regExps_pp, const int numRegExps);
 
 /**
  * @brief Parses a regular expression.
