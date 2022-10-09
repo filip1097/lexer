@@ -13,9 +13,16 @@
 /*> Defines **********************************************************************************************************/
 
 /*> Type Declarations ************************************************************************************************/
+/**
+ * @brief A lexer; reads strings and returns tokens.
+ *
+ * @param input_p     Pointer to the input string.
+ * @param currChar    The current char in the input string.
+ */
 typedef struct LexerS
 {
-  int dummy;
+  char* input_p;
+  int currCharIdx;
 } LexerS;
 
 /*> Constant Declarations ********************************************************************************************/
@@ -30,6 +37,13 @@ typedef struct LexerS
  * @return The generated lexer.
  */
 LexerS* generate_lexer(const char** const regExpStrs_pp, const int numRegExps);
+
+/**
+ * @brief Starts reading the provided input string.
+ * @param[in/out]      Pointer to the lexer.
+ * @param[in] input_p  Pointer to the string to read.
+ */
+void start_reading(LexerS* const lexer_p, char* const input_p);
 
 /*> End of Multiple Inclusion Protection *****************************************************************************/
 #endif

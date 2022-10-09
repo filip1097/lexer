@@ -5,6 +5,7 @@
 */
 
 /*> Includes **************************************************************************************/
+#include <stdlib.h>
 #include <stdio.h>
 
 #include "lexer_generator.h"
@@ -27,7 +28,12 @@
 int main()
 {
   const char* regExps[] = {"int", "char", "[0-9]+", "ba(g|d|[h,2])?(ab(hg)+)*"};
-  generate_lexer(regExps, 4);
+  char testString[] = {"intchar99900099"};
+
+  LexerS* lexer_p = generate_lexer(regExps, 4);
+  start_reading(lexer_p, testString);
+
+  free(lexer_p);
 
   printf("Finished\n");
   return 0;

@@ -33,6 +33,7 @@
 /*> Global Function Definitions *******************************************************************/
 LexerS* generate_lexer(const char** const regExpStrs_pp, const int numRegExps)
 {
+  LexerS* lexer_p = malloc(sizeof(*lexer_p));
   RegExpS* regExps[numRegExps];
 
   for (int i = 0; i < numRegExps; i++)
@@ -48,5 +49,11 @@ LexerS* generate_lexer(const char** const regExpStrs_pp, const int numRegExps)
   free(nfa_p);
   free(dfa_p);
 
-  return NULL;
+  return lexer_p;
+}
+
+void start_reading(LexerS* const lexer_p, char* const input_p)
+{
+  lexer_p->input_p = input_p;
+  lexer_p->currCharIdx = 0;
 }
